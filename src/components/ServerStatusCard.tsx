@@ -23,8 +23,8 @@ export const ServerStatusCard = ({ status, isLoading, serverUrl }: ServerStatusC
     if (isLoading) return <Badge variant="secondary">확인 중...</Badge>;
     if (!status) return <Badge variant="outline">대기 중</Badge>;
     return status.isConnected ? 
-      <Badge className="bg-green-500 hover:bg-green-600">연결 성공</Badge> : 
-      <Badge variant="destructive">연결 실패</Badge>;
+      <Badge className="bg-green-500 hover:bg-green-600">백엔드 연결 성공</Badge> : 
+      <Badge variant="destructive">백엔드 연결 실패</Badge>;
   };
 
   return (
@@ -34,9 +34,9 @@ export const ServerStatusCard = ({ status, isLoading, serverUrl }: ServerStatusC
           <div className="flex items-center gap-3">
             {getStatusIcon()}
             <div>
-              <CardTitle className="text-xl">AWS Spring Boot 서버 상태</CardTitle>
+              <CardTitle className="text-xl">Spring Boot 백엔드 상태</CardTitle>
               <CardDescription className="mt-1">
-                {serverUrl}
+                {serverUrl} (내부 통신)
               </CardDescription>
             </div>
           </div>
@@ -66,11 +66,12 @@ export const ServerStatusCard = ({ status, isLoading, serverUrl }: ServerStatusC
 
             <div className="p-3 rounded-lg border-l-4 border-l-blue-500 bg-blue-50 dark:bg-blue-950">
               <p className="text-sm font-medium text-blue-800 dark:text-blue-200">
-                테스트 기준
+                내부 통신 테스트 기준
               </p>
               <p className="text-xs text-blue-600 dark:text-blue-300 mt-1">
-                • 성공: 서버가 응답을 반환하는 경우 (404 포함)<br/>
-                • 실패: 연결이 되지 않거나 타임아웃이 발생하는 경우
+                • 성공: 백엔드 서버가 응답을 반환하는 경우 (404 포함)<br/>
+                • 실패: 백엔드 연결이 되지 않거나 타임아웃이 발생하는 경우<br/>
+                • 외부에서 8080 포트 직접 접근은 차단됨 (보안)
               </p>
             </div>
           </>

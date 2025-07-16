@@ -18,7 +18,7 @@ const Index = () => {
     if (!serverUrl.trim()) {
       toast({
         title: "오류",
-        description: "서버 URL을 입력해주세요.",
+        description: "백엔드 서버 URL을 입력해주세요.",
         variant: "destructive",
       });
       return;
@@ -30,15 +30,15 @@ const Index = () => {
       setStatus(result);
       
       toast({
-        title: result.isConnected ? "연결 성공!" : "연결 실패",
+        title: result.isConnected ? "백엔드 연결 성공!" : "백엔드 연결 실패",
         description: result.message,
         variant: result.isConnected ? "default" : "destructive",
       });
     } catch (error) {
-      console.error('상태 확인 중 오류:', error);
+      console.error('백엔드 상태 확인 중 오류:', error);
       toast({
         title: "오류",
-        description: "상태 확인 중 문제가 발생했습니다.",
+        description: "백엔드 상태 확인 중 문제가 발생했습니다.",
         variant: "destructive",
       });
     } finally {
@@ -62,11 +62,11 @@ const Index = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-            AWS Spring Boot 서버 모니터
+            Spring Boot 백엔드 모니터
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            AWS에 배포된 Spring Boot 서버의 연결 상태를 실시간으로 확인하세요. 
-            404 응답도 정상 연결로 간주됩니다.
+            AWS에 배포된 Spring Boot 백엔드 서버의 연결 상태를 실시간으로 확인하세요. 
+            프론트엔드와 백엔드가 같은 서버에서 실행됩니다.
           </p>
         </div>
 
@@ -88,7 +88,7 @@ const Index = () => {
               ) : (
                 <Play className="w-4 h-4 mr-2" />
               )}
-              {isLoading ? '확인 중...' : '상태 확인'}
+              {isLoading ? '확인 중...' : '백엔드 상태 확인'}
             </Button>
             
             <Button
@@ -107,27 +107,34 @@ const Index = () => {
           />
 
           <div className="max-w-2xl mx-auto mt-8 p-6 bg-white dark:bg-gray-800 rounded-lg border">
-            <h3 className="text-lg font-semibold mb-4">AWS 배포 가이드</h3>
-            <div className="space-y-3 text-sm text-muted-foreground">
+            <h3 className="text-lg font-semibold mb-4">AWS 동일 서버 배포 가이드</h3>
+            <div className="space-y-4 text-sm text-muted-foreground">
               <div>
                 <strong className="text-foreground">1. EC2 보안 그룹 설정:</strong>
-                <p>• 인바운드 규칙에 포트 8080 (HTTP) 추가</p>
-                <p>• 포트 80 직접 접속을 원한다면 80 포트도 추가</p>
+                <p>• 인바운드 규칙에 포트 80 (HTTP) 추가</p>
+                <p>• 포트 8080은 <span className="text-red-600 font-medium">열지 않음</span> (내부 통신만 사용)</p>
               </div>
               <div>
-                <strong className="text-foreground">2. Spring Boot 실행:</strong>
-                <p>• nohup java -jar your-app.jar &</p>
+                <strong className="text-foreground">2. 프론트엔드 배포 (포트 80):</strong>
+                <p>• npm run build로 빌드</p>
+                <p>• nginx 설치: sudo apt install nginx</p>
+                <p>• /var/www/html에 빌드된 파일 복사</p>
+                <p>• sudo systemctl start nginx</p>
+              </div>
+              <div>
+                <strong className="text-foreground">3. Spring Boot 실행 (포트 8080):</strong>
+                <p>• nohup java -jar your-app.jar --server.port=8080 &</p>
                 <p>• 또는 systemd 서비스로 등록</p>
               </div>
               <div>
-                <strong className="text-foreground">3. 80 포트 사용 (선택사항):</strong>
-                <p>• sudo java -jar your-app.jar --server.port=80</p>
-                <p>• 또는 nginx 리버스 프록시 설정</p>
+                <strong className="text-foreground">4. 내부 통신 확인:</strong>
+                <p>• 서버 내에서 curl http://localhost:8080 테스트</p>
+                <p>• 404 오류가 나오면 Spring Boot 정상 실행 중</p>
               </div>
               <div>
-                <strong className="text-foreground">4. 테스트:</strong>
-                <p>• http://your-ec2-ip:8080 접속</p>
-                <p>• 404 오류가 나오면 성공!</p>
+                <strong className="text-foreground">5. 접속 테스트:</strong>
+                <p>• 프론트엔드: http://your-ec2-ip (포트 80)</p>
+                <p>• 백엔드는 외부에서 직접 접속 불가 (보안 강화)</p>
               </div>
             </div>
           </div>
